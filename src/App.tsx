@@ -9,11 +9,19 @@ import StarterKit from '@tiptap/starter-kit'
 import { BubbleMenu } from '@tiptap/react'
 import Underline from '@tiptap/extension-underline'
 import Header from './components/Header.tsx'
+import { useState } from 'react';
+const [modeStatus,setModeStatus] = useState('');
 
-
-
-
-
+function changeMode(){
+  if(modeStatus === 'View'){
+    setModeStatus('Edit');
+  }else if(modeStatus === 'Edit'){
+    setModeStatus('View');
+  }else{
+    setModeStatus('err');
+  }
+   
+}
 const MenuBar = () => {
   const { editor } = useCurrentEditor()
   
@@ -23,12 +31,14 @@ const MenuBar = () => {
   return (
     <div className="control-group">
       <Header></Header>
+      <div data-tauri-drag-region className="drag-region"></div>
       <div className="button-group">
       {editor && <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
         <div className="bubble-menu">
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={editor.isActive('bold') ? 'is-active' : ''}
+            disabled = {modeStatus==='View'}
             >
             Bold
           </button>
@@ -202,8 +212,7 @@ const content = `
 ここに書いてください</h2>
 `
 export default function App() {
-  
-  return (  
+  return (
     <EditorProvider slotBefore={<MenuBar />} extensions={extensions} content={content}></EditorProvider>
   )
 }
